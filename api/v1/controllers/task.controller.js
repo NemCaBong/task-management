@@ -1,5 +1,6 @@
 const Task = require("../models/task.model");
 const paginationHelper = require("../../../helpers/pagination");
+const searchHelper = require("../../../helpers/search");
 
 module.exports.index = async (req, res) => {
   const find = {
@@ -33,6 +34,11 @@ module.exports.index = async (req, res) => {
   );
   // ket thuc phan trang
 
+  const searchObj = searchHelper(req.query);
+  if (searchObj.keyword) {
+    find.title = searchObj.keywordRegex;
+  }
+
   const tasks = await Task.find(find)
     .sort(sort)
     .skip(paginationObj.skip)
@@ -49,4 +55,25 @@ module.exports.detail = async (req, res) => {
   });
 
   res.json(task);
+};
+
+module.exports.changeStatusPatch = async (req, res) => {
+  try {
+    const status = req.body.status;
+    const id = req.params.id;
+    await Task.updateOne(
+      {
+        _id: id,
+      },
+      {
+        status: status,
+      }
+    );
+    res.json({ code: 200, message: "Cập nhật trạng thái thành công!" });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Cập nhật trạng thái không thành công! " + error.message,
+    });
+  }
 };

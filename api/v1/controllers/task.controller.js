@@ -2,6 +2,7 @@ const Task = require("../models/task.model");
 const paginationHelper = require("../../../helpers/pagination");
 const searchHelper = require("../../../helpers/search");
 
+// [PATCH] /api/v1/tasks
 module.exports.index = async (req, res) => {
   const find = {
     deleted: false,
@@ -47,6 +48,7 @@ module.exports.index = async (req, res) => {
   res.json(tasks);
 };
 
+// [PATCH] /api/v1/tasks/detail/:id
 module.exports.detail = async (req, res) => {
   const id = req.params.id;
   const task = await Task.findOne({
@@ -57,6 +59,7 @@ module.exports.detail = async (req, res) => {
   res.json(task);
 };
 
+// [PATCH] /api/v1/tasks/change-status
 module.exports.changeStatusPatch = async (req, res) => {
   try {
     const status = req.body.status;
@@ -74,6 +77,43 @@ module.exports.changeStatusPatch = async (req, res) => {
     res.json({
       code: 400,
       message: "Cập nhật trạng thái không thành công! " + error.message,
+    });
+  }
+};
+
+// [PATCH] /api/v1/tasks/change-multi
+module.exports.changeMulti = async (req, res) => {
+  try {
+    const { ids, key, value } = req.body;
+    console.log(ids, key, value);
+    switch (key) {
+      case "status":
+        await Task.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            status: value,
+          }
+        );
+        res.json({
+          code: 200,
+          message: "Cập nhật nhiều trạng thái thành công!",
+        });
+        break;
+
+      default:
+        res.json({
+          code: 400,
+          message:
+            "Cập nhật nhiều trạng thái không thành công! " + error.message,
+        });
+        break;
+    }
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Cập nhật nhiều trạng thái không thành công! " + error.message,
     });
   }
 };

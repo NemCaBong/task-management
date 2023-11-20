@@ -20,4 +20,6 @@ router.patch(
   controller.changeStatusPatch
 );
 
+router.patch("/change-multi", taskValidate.changeMulti, controller.changeMulti);
+
 module.exports = router;

@@ -1,4 +1,5 @@
 const Task = require("../models/task.model");
+const paginationHelper = require("../../../helpers/pagination");
 
 module.exports.index = async (req, res) => {
   const find = {
@@ -19,7 +20,23 @@ module.exports.index = async (req, res) => {
   }
   // hết sắp xếp
 
-  const tasks = await Task.find(find).sort(sort);
+  // Phân trang
+  const totalTasks = await Task.countDocuments(find);
+
+  const paginationObj = paginationHelper(
+    {
+      currentPage: 1,
+      limitItems: 2,
+    },
+    req.query,
+    totalTasks
+  );
+  // ket thuc phan trang
+
+  const tasks = await Task.find(find)
+    .sort(sort)
+    .skip(paginationObj.skip)
+    .limit(paginationObj.limitItems);
 
   res.json(tasks);
 };

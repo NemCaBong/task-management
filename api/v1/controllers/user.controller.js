@@ -178,3 +178,51 @@ module.exports.otp = async (req, res) => {
     });
   }
 };
+
+// [POST] /api/v1/users/password/reset
+module.exports.reset = async (req, res) => {
+  try {
+    const token = req.body.token;
+    const password = req.body.password;
+
+    const user = await User.findOne({
+      token: token,
+      deleted: false,
+    });
+
+    if (!user) {
+      res.json({
+        code: 400,
+        message: "Tài khoản không tồn tại",
+      });
+      return;
+    }
+
+    if (md5(password) === user.password) {
+      res.json({
+        code: 400,
+        message: "Vui lòng nhập mật khẩu khác mật khẩu cũ",
+      });
+      return;
+    }
+
+    await User.updateOne(
+      {
+        token: token,
+      },
+      {
+        password: md5(password),
+      }
+    );
+
+    res.json({
+      code: 200,
+      message: "Thay đổi mật khẩu thành công",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Thay đổi mật khẩu thất bại " + error.message,
+    });
+  }
+};

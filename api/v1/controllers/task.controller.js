@@ -100,7 +100,21 @@ module.exports.changeMulti = async (req, res) => {
           message: "Cập nhật nhiều trạng thái thành công!",
         });
         break;
-
+      case "deleted":
+        await Task.updateMany(
+          {
+            _id: { $in: ids },
+          },
+          {
+            deleted: true,
+            deletedAt: new Date(),
+          }
+        );
+        res.json({
+          code: 200,
+          message: "Xóa nhiều tasks thành công!",
+        });
+        break;
       default:
         res.json({
           code: 400,
@@ -169,7 +183,7 @@ module.exports.delete = async (req, res) => {
       },
       {
         deleted: true,
-        deleteAt: new Date(),
+        deletedAt: new Date(),
       }
     );
     res.json({

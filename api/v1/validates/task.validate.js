@@ -36,11 +36,13 @@ module.exports.changeMulti = (req, res, next) => {
   }
 
   if (!req.body.value) {
-    res.json({
-      code: 400,
-      message: "Trong body không có value",
-    });
-    return;
+    if (req.body.key === "status") {
+      res.json({
+        code: 400,
+        message: "Trong body không có value",
+      });
+      return;
+    }
   }
 
   if (req.body.key === "status") {

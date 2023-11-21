@@ -60,7 +60,7 @@ module.exports.detail = async (req, res) => {
 };
 
 // [PATCH] /api/v1/tasks/change-status
-module.exports.changeStatusPatch = async (req, res) => {
+module.exports.changeStatus = async (req, res) => {
   try {
     const status = req.body.status;
     const id = req.params.id;
@@ -114,6 +114,26 @@ module.exports.changeMulti = async (req, res) => {
     res.json({
       code: 400,
       message: "Cập nhật nhiều trạng thái không thành công! " + error.message,
+    });
+  }
+};
+
+// [POST] /api/v1/tasks/create
+module.exports.create = async (req, res) => {
+  try {
+    const newTask = new Task(req.body);
+    await newTask.save();
+
+    res.json({
+      code: 200,
+      message: "Tạo mới thành công!",
+      data: newTask,
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Tạo mới thất bại!" + error,
+      data: newTask,
     });
   }
 };

@@ -17,9 +17,11 @@ router.get("/detail/:id", controller.detail);
 router.patch(
   "/change-status/:id",
   taskValidate.changeStatus,
-  controller.changeStatusPatch
+  controller.changeStatus
 );
 
 router.patch("/change-multi", taskValidate.changeMulti, controller.changeMulti);
+
+router.post("/create", taskValidate.create, controller.create);
 
 module.exports = router;

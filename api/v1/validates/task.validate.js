@@ -55,3 +55,47 @@ module.exports.changeMulti = (req, res, next) => {
   }
   next();
 };
+
+module.exports.create = (req, res, next) => {
+  if (!req.body.status) {
+    res.json({
+      code: 400,
+      message: "Thiếu status",
+    });
+    return;
+  }
+
+  if (!req.body.timeFinish || !req.body.timeStart) {
+    res.json({
+      code: 400,
+      message: "Thiếu time",
+    });
+    return;
+  }
+
+  if (!req.body.title) {
+    res.json({
+      code: 400,
+      message: "Thiếu tiêu đề",
+    });
+    return;
+  }
+
+  if (!req.body.content) {
+    res.json({
+      code: 400,
+      message: "Thiếu nội dung",
+    });
+    return;
+  }
+
+  const statusList = ["initial", "doing", "finish", "pending", "notFinish"];
+  if (!statusList.includes(req.body.status)) {
+    res.json({
+      code: 400,
+      message: "Status không hợp lệ!",
+    });
+    return;
+  }
+  next();
+};

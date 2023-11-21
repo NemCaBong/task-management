@@ -85,7 +85,6 @@ module.exports.changeStatus = async (req, res) => {
 module.exports.changeMulti = async (req, res) => {
   try {
     const { ids, key, value } = req.body;
-    console.log(ids, key, value);
     switch (key) {
       case "status":
         await Task.updateMany(
@@ -134,6 +133,28 @@ module.exports.create = async (req, res) => {
       code: 400,
       message: "Tạo mới thất bại!" + error,
       data: newTask,
+    });
+  }
+};
+
+// [PATCH] /api/v1/tasks/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const id = req.params.id;
+    await Task.updateOne(
+      {
+        _id: id,
+      },
+      req.body
+    );
+    res.json({
+      code: 200,
+      message: "Chỉnh sửa thành công!",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Chỉnh sửa không thành công! " + error.message,
     });
   }
 };

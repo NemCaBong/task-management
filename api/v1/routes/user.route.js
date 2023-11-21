@@ -13,5 +13,6 @@ router.post("/login", userValidate.login, controller.login);
 
 // [POST] api/v1/users/password/forgot
 router.post("/password/forgot", controller.forgotPassword);
-
+// [POST] api/v1/users/password/otp
+router.post("/password/otp", controller.otp);
 module.exports = router;

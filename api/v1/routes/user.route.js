@@ -11,4 +11,7 @@ router.post("/register", userValidate.register, controller.register);
 // [POST] api/v1/users/login
 router.post("/login", userValidate.login, controller.login);
 
+// [POST] api/v1/users/password/forgot
+router.post("/password/forgot", controller.forgotPassword);
+
 module.exports = router;

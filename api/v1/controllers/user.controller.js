@@ -1,6 +1,11 @@
-const User = require("../models/user.model");
+// packages
 const md5 = require("md5");
-const generate = require("../../../helpers/generate");
+// models
+const User = require("../models/user.model");
+const ForgotPassword = require("../models/forgot-password.model");
+// helper
+const generateHelper = require("../../../helpers/generate.js");
+const sendMailHelper = require("../../../helpers/sendMail.js");
 
 // [POST] /api/v1/users/register
 module.exports.register = async (req, res) => {
@@ -22,7 +27,7 @@ module.exports.register = async (req, res) => {
       fullName: req.body.fullName,
       email: req.body.email,
       password: md5(req.body.password),
-      token: generate.generateRandomString(20),
+      token: generateHelper.generateRandomString(20),
     };
 
     const newUser = new User(infoUser);
@@ -80,6 +85,57 @@ module.exports.login = async (req, res) => {
     res.json({
       code: 400,
       message: "Đăng nhập thất bại" + error.message,
+    });
+  }
+};
+
+// [POST] /api/v1/users/password/forgot
+module.exports.forgotPassword = async (req, res) => {
+  try {
+    const email = req.body.email;
+
+    const user = await User.findOne({
+      deleted: false,
+      email: email,
+    });
+
+    if (!user) {
+      res.json({
+        code: 400,
+        message: "Email không tồn tại",
+      });
+      return;
+    }
+
+    const otp = generateHelper.generateRandomNumber(8);
+
+    const timeExpire = 5;
+
+    const forgotPasswordObj = {
+      email: email,
+      otp: otp,
+      // 5 phút là hết hạn
+      expireAt: Date.now() + timeExpire * 60,
+    };
+    // việc 1: lưu thông tin vào forgotPassword
+    const forgotPassword = new ForgotPassword(forgotPasswordObj);
+    await forgotPassword.save();
+
+    // việc 2: gửi otp qua mail dùng nodemailer
+
+    const subject = "Xác minh tài khoản";
+    const html = `Mã OTP để lấy lại mật khẩu là: <b>${otp}</b>. Thời hạn sử dụng là ${timeExpire} phút. Vui lòng không chia sẻ mã OTP này với bất cứ ai.`;
+
+    sendMailHelper.sendMail(email, subject, html);
+
+    res.json({
+      code: 200,
+      message: "Đã gửi mã OTP qua email",
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Lấy mã OTP thất bại" + error.message,
     });
   }
 };

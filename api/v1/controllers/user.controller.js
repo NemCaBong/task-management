@@ -115,7 +115,7 @@ module.exports.forgotPassword = async (req, res) => {
       email: email,
       otp: otp,
       // 5 phút là hết hạn
-      expireAt: Date.now() + timeExpire * 60,
+      expireAt: Date.now() + timeExpire * 60 * 1000,
     };
     // việc 1: lưu thông tin vào forgotPassword
     const forgotPassword = new ForgotPassword(forgotPasswordObj);
@@ -223,6 +223,37 @@ module.exports.reset = async (req, res) => {
     res.json({
       code: 400,
       message: "Thay đổi mật khẩu thất bại " + error.message,
+    });
+  }
+};
+
+// [GET] /api/v1/users/detail/:id
+module.exports.detail = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const user = await User.findOne({
+      _id: id,
+      deleted: false,
+    }).select("-password -token");
+
+    if (!user) {
+      res.json({
+        code: 400,
+        message: "Tài khoản không tồn tại",
+      });
+      return;
+    }
+
+    res.json({
+      code: 200,
+      message: "Thành công",
+      info: user,
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Thất bại  " + error.message,
     });
   }
 };

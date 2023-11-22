@@ -18,4 +18,8 @@ router.post("/password/otp", controller.otp);
 
 // [POST] api/v1/users/password/reset
 router.post("/password/reset", controller.reset);
+
+// [POST] api/v1/users/detail
+router.post("/detail/:id", controller.detail);
+
 module.exports = router;

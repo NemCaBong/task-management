@@ -227,33 +227,11 @@ module.exports.reset = async (req, res) => {
   }
 };
 
-// [GET] /api/v1/users/detail/:id
+// [GET] /api/v1/users/detail
 module.exports.detail = async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    const user = await User.findOne({
-      _id: id,
-      deleted: false,
-    }).select("-password -token");
-
-    if (!user) {
-      res.json({
-        code: 400,
-        message: "Tài khoản không tồn tại",
-      });
-      return;
-    }
-
-    res.json({
-      code: 200,
-      message: "Thành công",
-      info: user,
-    });
-  } catch (error) {
-    res.json({
-      code: 400,
-      message: "Thất bại  " + error.message,
-    });
-  }
+  res.json({
+    code: 200,
+    message: "Thành công",
+    info: req.user,
+  });
 };

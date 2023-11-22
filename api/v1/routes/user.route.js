@@ -3,6 +3,8 @@ const router = express.Router();
 
 const userValidate = require("../validates/user.validate");
 
+const authenMiddleware = require("../middlewares/authen.middleware");
+
 const controller = require("../controllers/user.controller");
 
 // [POST] api/v1/users/register
@@ -20,6 +22,6 @@ router.post("/password/otp", controller.otp);
 router.post("/password/reset", controller.reset);
 
 // [POST] api/v1/users/detail
-router.post("/detail/:id", controller.detail);
+router.get("/detail", authenMiddleware.requireAuth, controller.detail);
 
 module.exports = router;

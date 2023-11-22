@@ -235,3 +235,22 @@ module.exports.detail = async (req, res) => {
     info: req.user,
   });
 };
+
+// [GET] /api/v1/users/list
+module.exports.listUser = async (req, res) => {
+  try {
+    const usersList = await User.find({ deleted: false }).select(
+      "fullName email"
+    );
+    res.json({
+      code: 200,
+      message: "Lấy thành công",
+      users: usersList,
+    });
+  } catch (error) {
+    res.json({
+      code: 400,
+      message: "Lấy thất bại" + error.message,
+    });
+  }
+};

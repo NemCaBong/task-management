@@ -21,7 +21,10 @@ router.post("/password/otp", controller.otp);
 // [POST] api/v1/users/password/reset
 router.post("/password/reset", controller.reset);
 
-// [POST] api/v1/users/detail
+// [GET] api/v1/users/detail
 router.get("/detail", authenMiddleware.requireAuth, controller.detail);
+
+// [GET] api/v1/users/detail
+router.get("/list", authenMiddleware.requireAuth, controller.listUser);
 
 module.exports = router;
